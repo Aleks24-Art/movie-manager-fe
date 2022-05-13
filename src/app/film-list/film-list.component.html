@@ -1,0 +1,167 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" style="color:white;">Movie Manager</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" (click)="onOpenModal(null, 'add')">Add Movie<span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+    <form style="margin-right: 90px">
+      <div>
+        <input type="search" id="mySearch" name="q" #key="ngModel" ngModel
+               placeholder="Search the site..." size="30" style="border-radius: 10px;">
+        <img class="search" src="https://icon-library.com/images/white-search-icon-png/white-search-icon-png-19.jpg" alt="" (click)="goFilmsPage(1, key.value)">
+      </div>
+    </form>
+    <button class="btn btn-secondary" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container" id="main-container">
+  <div class="row">
+    <div *ngFor="let film of films | paginate: { id: 'pagination',
+                                                      itemsPerPage: 8,
+                                                      currentPage: page.number + 1,
+                                                      totalItems: page?.totalElements} " class="col-md-3">
+      <div class="card m-b-30">
+        <div class="card-body row element">
+          <img src="{{film?.posterUrl}}" alt="" class="buttonFilmDetails" (click)="onShowDetails(film?.id)">
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><i class="fa fa-envelope float-right"></i>{{film?.title}}</li>
+          <li class="list-group-item"><i class="fa fa-phone float-right"></i>Release: {{film?.releaseDate}}</li>
+        </ul>
+        <div class="card-body">
+          <div class="float-right btn-group btn-group-sm">
+            <a (click)="onOpenModal(film, 'edit')" class="btn btn-primary tooltips" data-placement="top" data-original-title="Edit"><i class="fa fa-pencil"></i> </a>
+            <a (click)="onOpenModal(film, 'delete')" class="btn btn-secondary tooltips" data-placement="top" data-original-title="Delete"><i class="fa fa-times"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Add Movie Modal -->
+  <div class="modal fade" id="addFilmModal" tabindex="-1" role="dialog" aria-labelledby="addFilmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addFilmModalLabel">Add Movie</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #addForm="ngForm" (ngSubmit)="onAddFilm(addForm)">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" ngModel="{{editFilm?.title}}" name="title" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Title" required>
+            </div>
+            <input type="hidden" ngModel="{{editFilm?.id}}" name="id" class="form-control" id="id" placeholder="Email">
+            <div class="form-group">
+              <label for="releaseDate">Release date</label>
+              <input type="email" ngModel="{{editFilm?.releaseDate}}" name="releaseDate" class="form-control" id="releaseDate" placeholder="yyyy-mm-dd" pattern = "^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$" required>
+            </div>
+            <div class="form-group">
+              <label for="posterUrl">Poster URL</label>
+              <input type="text" ngModel="{{editFilm?.posterUrl}}" name="posterUrl" class="form-control" id="posterUrl" placeholder="Poster URL" required>
+            </div>
+            <div class="form-group">
+              <label for="plot">Plot</label>
+              <input type="text" ngModel="{{editFilm?.plot}}" name="plot" class="form-control" id="plot" placeholder="Plot" required>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="add-film-form" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Movie -->
+  <div class="modal fade" id="updateFilmModal" tabindex="-1" role="dialog" aria-labelledby="filmEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateFilmModalLabel">Edit Film {{editFilm?.title}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" ngModel="{{editFilm?.title}}" name="title" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Title">
+            </div>
+            <input type="hidden" ngModel="{{editFilm?.id}}" name="id" class="form-control" id="id" placeholder="Email">
+            <div class="form-group">
+              <label for="releaseDate">Release date</label>
+              <input type="email" ngModel="{{editFilm?.releaseDate}}" name="releaseDate" class="form-control" id="releaseDate" placeholder="yyyy-mm-dd">
+            </div>
+            <div class="form-group">
+              <label for="posterUrl">Poster URL</label>
+              <input type="text" ngModel="{{editFilm?.posterUrl}}" name="posterUrl" class="form-control" id="posterUrl" placeholder="Poster URL">
+            </div>
+            <div class="form-group">
+              <label for="plot">Plot</label>
+              <input type="text" ngModel="{{editFilm?.plot}}" name="plot" class="form-control" id="plot" placeholder="Plot">
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="edit" data-dismiss="modal" class="btn btn-secondary">Close</button>
+              <button (click)="onUpdateFilm(editForm.value)" data-dismiss="modal" class="btn btn-primary" >Save changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Movie -->
+  <div class="modal fade" id="deleteFilmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModelLabel">Delete Film</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete film {{deleteFilm?.title}}?</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            <button (click)="onDeleteFilm(deleteFilm?.id)" class="btn btn-danger" data-dismiss="modal">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notification for no Movies -->
+<div *ngIf="films?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO Films!</h4>
+    <p>No Films were found.</p>
+  </div>
+</div>
+
+<div  style="text-align: center; font-size: 30px; margin-top: 40px;">
+  <pagination-controls  id="pagination"
+                        (pageChange)="goFilmsPage($event, this.searchKey)"
+                        (pageBoundsCorrection)="goFilmsPage($event, this.searchKey)"
+                        directionLinks="true"
+                        autoHide="true"
+                        previousLabel="Previous"
+                        nextLabel="Next"
+                        maxSize="10">
+  </pagination-controls>
+</div>
