@@ -41,8 +41,8 @@ export class FilmListComponent implements OnInit {
         this.goFilmsPage(this.currentPage, this.searchKey);
         addForm.reset();
       },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
+      (error: string) => {
+        alert(error);
         addForm.reset();
       }
     );
@@ -54,8 +54,8 @@ export class FilmListComponent implements OnInit {
         console.log(response);
         this.goFilmsPage(this.currentPage, this.searchKey);
       },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
+      (error: string) => {
+        alert(error);
       }
     );
   }
@@ -88,8 +88,8 @@ export class FilmListComponent implements OnInit {
           this.currentPage = pageNumber;
           console.log(this.page);
         },
-        (error: HttpErrorResponse) => {
-          alert(error.message);
+        (error: string) => {
+          alert(error);
         }
       );
       return;
@@ -102,8 +102,8 @@ export class FilmListComponent implements OnInit {
         this.currentPage = pageNumber;
         console.log(this.page);
       },
-      (error: HttpErrorResponse) => {
-        alert(error.message);
+      (error: string) => {
+        alert(error);
       }
     );
   }
